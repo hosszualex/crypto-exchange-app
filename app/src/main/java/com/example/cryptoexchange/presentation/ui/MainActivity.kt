@@ -1,4 +1,4 @@
-package com.example.cryptoexchange
+package com.example.cryptoexchange.presentation.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.cryptoexchange.ui.theme.CryptoExchangeTheme
+import com.example.cryptoexchange.presentation.theme.CryptoExchangeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,4 +1,4 @@
-package com.example.cryptoexchange.ui.theme
+package com.example.cryptoexchange.presentation.theme
 
 import android.app.Activity
 import android.os.Build
