@@ -38,19 +38,13 @@ constructor(
         when (event) {
             is CryptoListUiEvent.OnRepeatFetchCryptoData -> getExchangeCrypto()
             is CryptoListUiEvent.OnStopFetchingCryptoData -> stopFetchingCryptoData()
+            is CryptoListUiEvent.OnDismissError -> dismissErrorDialog()
             else -> Unit
         }
     }
 
-    private fun onError(throwable: Throwable) {
-
-    }
-
     private fun getExchangeCrypto() {
-//        if (_uiState.value.isLoading)
-//            return
         Log.i("=====>", "START")
-
         fetchingCryptoDataJob = viewModelScope.launch {
             _uiState.update { it.copy(isLoading = shouldShowLoading) }
             while (true) {
@@ -66,7 +60,7 @@ constructor(
                     .also {
                         _uiState.update { it.copy(isLoading = false) }
                     }
-                delay(10000L)
+                delay(5000L)
             }
         }
     }
@@ -76,22 +70,33 @@ constructor(
         fetchingCryptoDataJob?.cancel()
     }
 
+    private fun dismissErrorDialog() {
+        _uiState.update { it.copy(error = AlertDialogState(false, null)) }
+    }
+
     private val shouldShowLoading: Boolean
-        get() = _uiState.value.cryptoData.isNullOrEmpty()
+        get() = _uiState.value.cryptoData.isEmpty()
 
     private fun setError(throwable: Throwable) {
-        _uiState.update { it.copy(error = throwable) }
+        _uiState.update { it.copy(error = AlertDialogState(true, throwable)) }
         Log.i("===ERROR===>", throwable.message.toString())
     }
+
     sealed interface CryptoListUiEvent {
         data object OnRepeatFetchCryptoData : CryptoListUiEvent
-        data object OnStopFetchingCryptoData: CryptoListUiEvent
-        data class Error(val errorMessage: String) : CryptoListUiEvent
+        data object OnStopFetchingCryptoData : CryptoListUiEvent
+        data object OnDismissError : CryptoListUiEvent
     }
+
     data class CryptoListUiState(
         val isLoading: Boolean = false,
         val isNetworkConnectivityActive: Boolean = true, // todo: implement this
         val cryptoData: List<CryptoCurrency> = listOf(),
-        val error: Throwable? = null,
+        var error: AlertDialogState? = null,
+    )
+
+    data class AlertDialogState(
+        var visible: Boolean,
+        var exception: Throwable?
     )
 }
