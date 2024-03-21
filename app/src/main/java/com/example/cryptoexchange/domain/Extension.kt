@@ -16,3 +16,10 @@ fun String.removeWhitespaceRegex(): String {
     val regex = Regex("\\s")
     return regex.replace(this, "")
 }
+
+fun Double.formatDailyRelativeChange(): String {
+    return if (this > 0)
+        "+" + String.format("%.2f", this) + "%"
+    else
+        String.format("%.2f", this) + "%"
+}

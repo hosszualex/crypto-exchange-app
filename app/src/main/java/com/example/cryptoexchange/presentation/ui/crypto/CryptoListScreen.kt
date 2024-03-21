@@ -1,25 +1,45 @@
 package com.example.cryptoexchange.presentation.ui.crypto
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import com.example.cryptoexchange.domain.formatDailyRelativeChange
 import com.example.cryptoexchange.domain.models.CryptoCurrency
+import com.example.cryptoexchange.domain.models.CryptoCurrencyEnum
 import com.example.cryptoexchange.presentation.theme.CryptoExchangeTheme
+import com.example.cryptoexchange.presentation.theme.DarkGreen
 
 @Composable
 fun CryptoListRoute(viewModel: CryptoListViewModel = hiltViewModel()) {
@@ -48,7 +68,7 @@ fun CryptoListScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // todo: create a search bar
@@ -59,16 +79,118 @@ fun CryptoListScreen(
 @Composable
 private fun CryptoList(cryptoData: List<CryptoCurrency>) {
     LazyColumn {
-        items(cryptoData.size) {
-            Row(
+        items(
+            count = cryptoData.size,
+            key = {
+                cryptoData[it].cryptoCurrencySymbol.symbol
+            }
+        ) {
+            val currentCrypto = cryptoData[it]
+            CryptoCurrencyItem(currentCrypto)
+        }
+    }
+}
+
+@Composable
+private fun CryptoCurrencyItem(currentCrypto: CryptoCurrency) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 1.dp
+        )
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(currentCrypto.cryptoCurrencySymbol.imageReource),
+                contentDescription = "arrow down",
+                tint = Color.Unspecified,
+                modifier = Modifier.size(36.dp)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = cryptoData[it].cryptoCurrencySymbol.symbol)
-                Text(text = cryptoData[it].ask.toString())
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Text(
+                        text = currentCrypto.cryptoCurrencySymbol.displayName,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier
+                            .padding(vertical = 2.dp)
+                            .weight(1f)
+                    )
+
+                    AnimatedContent(
+                        targetState = currentCrypto.ask,
+                        label = "ask price animation update",
+                        transitionSpec = {
+                            slideInVertically { it } togetherWith slideOutVertically { -it }
+                        }
+                    ) { value ->
+                        Text(
+                            text = "$ $value",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier
+                                .padding(vertical = 2.dp)
+                                .graphicsLayer {
+                                    alpha = 1.0f
+                                }
+                        )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = currentCrypto.cryptoCurrencySymbol.symbol,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Light,
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.padding(vertical = 2.dp)
+                    )
+
+
+                    AnimatedContent(
+                        targetState = currentCrypto.dailyRelativeChange,
+                        label = "percent change animation update",
+                        transitionSpec = {
+                            slideInVertically { it } togetherWith slideOutVertically { -it }
+                        }
+                    ) { dailyRelativeChange ->
+                        Text(
+                            text = dailyRelativeChange.formatDailyRelativeChange(),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = if (dailyRelativeChange >= 0) DarkGreen else Color.Red,
+                            modifier = Modifier.padding(vertical = 2.dp)
+                        )
+                    }
+                }
             }
 
         }
@@ -83,7 +205,18 @@ fun ExchangePreview() {
             CryptoListViewModel.CryptoListUiState(
                 isLoading = false,
                 isNetworkConnectivityActive = true,
-                cryptoData = listOf(),
+                cryptoData = listOf<CryptoCurrency>(
+                    CryptoCurrency(
+                        cryptoCurrencySymbol = CryptoCurrencyEnum.BTC,
+                        ask = 63888.0,
+                        dailyRelativeChange = 1.39422
+                    ),
+                    CryptoCurrency(
+                        cryptoCurrencySymbol = CryptoCurrencyEnum.ETH,
+                        ask = 3345.3,
+                        dailyRelativeChange = -2.870666
+                    )
+                ),
                 error = null
             )
         ) {

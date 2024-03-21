@@ -60,7 +60,7 @@ constructor(
                     .collect { cryptoData ->
                         Log.i("=====>", "Data Refreshed")
                         _uiState.update {
-                            it.copy(cryptoData = cryptoData)
+                            it.copy(cryptoData = cryptoData.sortedBy { crypto -> crypto.cryptoCurrencySymbol.symbol })
                         }
                     }
                     .also {

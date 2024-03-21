@@ -7,7 +7,7 @@ interface CryptoApiService {
         cryptoSymbols: Set<String> = setOf(
             "tBTCUSD",
             "tETHUSD",
-            "tCHSB:USD",
+            "tBORG:USD",
             "tLTCUSD",
             "tXRPUSD",
             "tDSHUSD",

@@ -28,7 +28,7 @@ object CryptoCurrencyMapper {
         return when (value.removeStrings(setOf("t", "USD", ":"))) {
             CryptoCurrencyEnum.BTC.symbol -> CryptoCurrencyEnum.BTC
             CryptoCurrencyEnum.ETH.symbol -> CryptoCurrencyEnum.ETH
-            CryptoCurrencyEnum.CHSB.symbol -> CryptoCurrencyEnum.CHSB
+            CryptoCurrencyEnum.BORG.symbol -> CryptoCurrencyEnum.BORG
             CryptoCurrencyEnum.LTC.symbol -> CryptoCurrencyEnum.LTC
             CryptoCurrencyEnum.XRP.symbol -> CryptoCurrencyEnum.XRP
             CryptoCurrencyEnum.DSH.symbol -> CryptoCurrencyEnum.DSH
