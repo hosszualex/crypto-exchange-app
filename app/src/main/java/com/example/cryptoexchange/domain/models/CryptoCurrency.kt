@@ -3,6 +3,6 @@ package com.example.cryptoexchange.domain.models
 data class CryptoCurrency(
     val worldCurrencySymbol: String = "USD",
     val cryptoCurrencySymbol: CryptoCurrencyEnum,
-    val ask: Double,
+    val priceOfLastTrade: Double,
     val dailyRelativeChange: Double,
 )

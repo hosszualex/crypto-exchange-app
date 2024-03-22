@@ -16,7 +16,7 @@ object CryptoCurrencyMapper {
                 cryptoCurrencyList.add(
                     CryptoCurrency(
                         cryptoCurrencySymbol = cryptoSymbol,
-                        ask = innerArray.getDouble(3),
+                        priceOfLastTrade = innerArray.getDouble(7),
                         dailyRelativeChange = innerArray.getDouble(6) * 100,
                     ),
                 )

@@ -251,8 +251,8 @@ private fun CryptoCurrencyItem(currentCrypto: CryptoCurrency) {
                     )
 
                     AnimatedContent(
-                        targetState = currentCrypto.ask,
-                        label = "ask price animation update",
+                        targetState = currentCrypto.priceOfLastTrade,
+                        label = "last trade price animation update",
                         transitionSpec = {
                             slideInVertically { it } togetherWith slideOutVertically { -it }
                         },
@@ -296,7 +296,12 @@ private fun CryptoCurrencyItem(currentCrypto: CryptoCurrency) {
                             text = dailyRelativeChange.formatDailyRelativeChange(),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
-                            color = if (dailyRelativeChange >= 0) DarkGreen else Color.Red,
+                            color = if (dailyRelativeChange > 0)
+                                DarkGreen
+                            else if (dailyRelativeChange == 0.0)
+                                MaterialTheme.colorScheme.tertiary
+                            else
+                                Color.Red,
                             modifier = Modifier.padding(vertical = 2.dp),
                         )
                     }
@@ -317,12 +322,12 @@ fun ExchangePreview() {
                     listOf<CryptoCurrency>(
                         CryptoCurrency(
                             cryptoCurrencySymbol = CryptoCurrencyEnum.BTC,
-                            ask = 63888.0,
+                            priceOfLastTrade = 63888.0,
                             dailyRelativeChange = 1.39422,
                         ),
                         CryptoCurrency(
                             cryptoCurrencySymbol = CryptoCurrencyEnum.ETH,
-                            ask = 3345.3,
+                            priceOfLastTrade = 3345.3,
                             dailyRelativeChange = -2.870666,
                         ),
                     ),
