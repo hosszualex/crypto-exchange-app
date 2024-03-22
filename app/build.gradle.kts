@@ -77,11 +77,13 @@ dependencies {
     ksp("com.google.dagger:hilt-android-compiler:2.48")
 
     // =================KTOR COMPONENTS===============//
-    implementation("io.ktor:ktor-client-core:1.5.0")
-    implementation("io.ktor:ktor-client-android:1.5.0")
-    implementation("io.ktor:ktor-client-serialization:1.5.0")
+    implementation("io.ktor:ktor-client-core:2.3.9")
+    implementation("io.ktor:ktor-client-android:2.3.9")
+    implementation("io.ktor:ktor-client-serialization:2.3.9")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.9")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.9")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-    implementation("io.ktor:ktor-client-logging-jvm:1.5.0")
+    implementation("io.ktor:ktor-client-logging-jvm:2.3.2")
 
     // =================API COMPONENTS===============//
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
