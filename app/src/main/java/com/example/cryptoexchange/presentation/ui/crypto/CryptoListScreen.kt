@@ -2,12 +2,19 @@ package com.example.cryptoexchange.presentation.ui.crypto
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,18 +30,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +59,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -68,6 +82,7 @@ fun CryptoListRoute(viewModel: CryptoListViewModel = hiltViewModel()) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CryptoListScreen(
     uiState: CryptoListViewModel.CryptoListUiState,
@@ -88,7 +103,64 @@ fun CryptoListScreen(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // todo: create a search bar
+
+        SearchBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize()
+                .padding(bottom = 8.dp) ,
+            query = uiState.searchFilteringState.text,
+            onQueryChange = { newText ->
+                onEvent(CryptoListViewModel.CryptoListUiEvent.OnSearchCrypto(newText))
+            },
+            onSearch = { newText ->
+                onEvent(CryptoListViewModel.CryptoListUiEvent.OnSearchCrypto(newText))
+            },
+            active = uiState.searchFilteringState.isSearching,
+            onActiveChange = {
+                onEvent(CryptoListViewModel.CryptoListUiEvent.OnToggleSearch)
+            },
+            placeholder = {
+                Text(text = "Search Symbol")
+            },
+            leadingIcon = {
+                Icon(imageVector = Icons.Default.Search, contentDescription = "crypto search icon")
+            },
+            trailingIcon = {
+                if (uiState.searchFilteringState.isSearching) {
+                    Icon(imageVector = Icons.Default.Close,
+                        contentDescription = "crypto close icon",
+                        modifier = Modifier.clickable {
+                            onEvent(CryptoListViewModel.CryptoListUiEvent.OnToggleSearch)
+                        })
+                }
+            }
+        ) {
+            val filteredCryptoData =
+                if (uiState.searchFilteringState.filteredCryptoData.isEmpty() && uiState.searchFilteringState.text.isEmpty())
+                    cryptoData
+                else
+                    uiState.searchFilteringState.filteredCryptoData
+
+            if (filteredCryptoData.isEmpty())
+                Text(
+                    text = "No cryptocurrency matches that symbol",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                )
+            else {
+                AnimatedContent(
+                    targetState = filteredCryptoData,
+                    label = "search animation update",
+                    transitionSpec = {
+                        slideInVertically { -it } togetherWith slideOutVertically { it }
+                    }
+                ) { list ->
+                    CryptoList(cryptoData = list)
+                }
+            }
+        }
+
         CryptoList(cryptoData = cryptoData)
     }
 
@@ -100,9 +172,14 @@ fun CryptoListScreen(
         ProgressIndicator()
     }
 
-    if (uiState.error?.visible == true) {
-        ErrorDialog(uiState.error?.exception?.message.toString()) {
-            onEvent(CryptoListViewModel.CryptoListUiEvent.OnDismissError)
+    with(uiState.errorState) {
+        if (visible) {
+            ErrorDialog(
+                exception?.message.toString(),
+                exception?.cause?.message.toString()
+            ) {
+                onEvent(CryptoListViewModel.CryptoListUiEvent.OnDismissError)
+            }
         }
     }
 }
@@ -262,7 +339,7 @@ fun ExchangePreview() {
                         dailyRelativeChange = -2.870666
                     )
                 ),
-                error = null
+                errorState = CryptoListViewModel.AlertDialogState()
             )
         ) {
         }
@@ -306,10 +383,10 @@ fun ErrorAlertDialog(
 @Composable
 fun ErrorDialog(
     errorMessage: String,
+    errorCode: String,
     onDismissRequest: () -> Unit,
-    ) {
+) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
-        // Draw a rectangle shape with rounded corners inside the dialog
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -332,7 +409,7 @@ fun ErrorDialog(
                     modifier = Modifier.padding(16.dp),
                 )
                 Text(
-                    text = errorMessage,
+                    text = "$errorMessage\n($errorCode)",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp),
                 )

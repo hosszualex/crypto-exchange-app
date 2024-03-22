@@ -1,13 +1,11 @@
 package com.example.cryptoexchange.presentation.ui.crypto
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptoexchange.domain.models.CryptoCurrency
 import com.example.cryptoexchange.domain.repositories.CryptoDataRepository
+import com.example.cryptoexchange.domain.ErrorUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,15 +29,16 @@ constructor(
 
     private val _uiState = MutableStateFlow(CryptoListUiState())
     val uiState: StateFlow<CryptoListUiState> = _uiState.asStateFlow()
-    var email by mutableStateOf("dragana@asd.com") // todo: delete test values
-        private set
+
     private var fetchingCryptoDataJob: Job? = null
+
     fun onEvent(event: CryptoListUiEvent) {
         when (event) {
             is CryptoListUiEvent.OnRepeatFetchCryptoData -> getExchangeCrypto()
             is CryptoListUiEvent.OnStopFetchingCryptoData -> stopFetchingCryptoData()
             is CryptoListUiEvent.OnDismissError -> dismissErrorDialog()
-            else -> Unit
+            is CryptoListUiEvent.OnToggleSearch -> toggleSearch()
+            is CryptoListUiEvent.OnSearchCrypto -> searchQuery(event.query)
         }
     }
 
@@ -53,8 +52,9 @@ constructor(
                     .catch { exception -> setError(exception) }
                     .collect { cryptoData ->
                         Log.i("=====>", "Data Refreshed")
+                        val data = cryptoData.sortedBy { crypto -> crypto.cryptoCurrencySymbol.symbol }
                         _uiState.update {
-                            it.copy(cryptoData = cryptoData.sortedBy { crypto -> crypto.cryptoCurrencySymbol.symbol })
+                            it.copy(cryptoData = data)
                         }
                     }
                     .also {
@@ -65,38 +65,78 @@ constructor(
         }
     }
 
+    private fun toggleSearch() {
+        val oldState = _uiState.value.searchFilteringState
+        _uiState.update {
+            it.copy(
+                searchFilteringState = SearchCryptoState(
+                    text= if (oldState.isSearching) "" else oldState.text,
+                    isSearching = !oldState.isSearching
+                )
+            )
+        }
+    }
+
+    private fun searchQuery(query: String) {
+        val oldState = _uiState.value.searchFilteringState
+        val fullData = _uiState.value.cryptoData
+        val filteredData =
+            if (query.isNotEmpty())
+                fullData.filter { it.cryptoCurrencySymbol.symbol.contains(query.uppercase()) }
+            else
+                fullData
+        _uiState.update {
+            it.copy(
+                searchFilteringState = SearchCryptoState(
+                    text= query,
+                    isSearching = oldState.isSearching,
+                    filteredCryptoData = filteredData
+                )
+            )
+        }
+    }
+
     private fun stopFetchingCryptoData() {
         Log.i("=====>", "CANCEL")
         fetchingCryptoDataJob?.cancel()
-    }
-
-    private fun dismissErrorDialog() {
-        _uiState.update { it.copy(error = AlertDialogState(false, null)) }
     }
 
     private val shouldShowLoading: Boolean
         get() = _uiState.value.cryptoData.isEmpty()
 
     private fun setError(throwable: Throwable) {
-        _uiState.update { it.copy(error = AlertDialogState(true, throwable)) }
-        Log.i("===ERROR===>", throwable.message.toString())
+        _uiState.update { it.copy(errorState = AlertDialogState(true, ErrorUtil.parsedErrorThrowable(throwable))) }
+    }
+
+    private fun dismissErrorDialog() {
+        _uiState.update { it.copy(errorState = AlertDialogState(false, null)) }
     }
 
     sealed interface CryptoListUiEvent {
         data object OnRepeatFetchCryptoData : CryptoListUiEvent
         data object OnStopFetchingCryptoData : CryptoListUiEvent
         data object OnDismissError : CryptoListUiEvent
+        data object OnToggleSearch : CryptoListUiEvent
+        data class OnSearchCrypto(val query: String) : CryptoListUiEvent
+
+
     }
 
     data class CryptoListUiState(
         val isLoading: Boolean = false,
         val isNetworkConnectivityActive: Boolean = true, // todo: implement this
         val cryptoData: List<CryptoCurrency> = listOf(),
-        var error: AlertDialogState? = null,
+        val searchFilteringState: SearchCryptoState = SearchCryptoState(),
+        var errorState: AlertDialogState = AlertDialogState()
     )
 
     data class AlertDialogState(
-        var visible: Boolean,
-        var exception: Throwable?
+        val visible: Boolean = false,
+        val exception: Throwable? = null
+    )
+    data class SearchCryptoState(
+        val text: String = "",
+        val isSearching: Boolean = false,
+        val filteredCryptoData: List<CryptoCurrency> = listOf()
     )
 }

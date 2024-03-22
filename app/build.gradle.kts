@@ -24,6 +24,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            kotlinOptions {
+                freeCompilerArgs = listOf("-Xdebug")
+            }
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -38,7 +43,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-Xdebug")
     }
     buildFeatures {
         compose = true
