@@ -9,7 +9,7 @@ fun String.removeStrings(stringToRemove: Set<String>): String {
 }
 
 fun Set<String>.toStringForSymbols(): String {
-    return this.toString().substring(1, this.toString().length-1).removeWhitespaceRegex()
+    return this.toString().substring(1, this.toString().length - 1).removeWhitespaceRegex()
 }
 
 fun String.removeWhitespaceRegex(): String {
@@ -18,8 +18,9 @@ fun String.removeWhitespaceRegex(): String {
 }
 
 fun Double.formatDailyRelativeChange(): String {
-    return if (this > 0)
+    return if (this > 0) {
         "+" + String.format("%.2f", this) + "%"
-    else
+    } else {
         String.format("%.2f", this) + "%"
+    }
 }

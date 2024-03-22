@@ -1,14 +1,13 @@
 package com.example.cryptoexchange.tests
 
-import com.example.cryptoexchange.mocks.MockData
 import com.example.cryptoexchange.domain.repositories.CryptoCurrencyMapper
+import com.example.cryptoexchange.mocks.MockData
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class CryptoCurrencyMapperTest {
     private val mockCryptoDataRepository = CryptoCurrencyMapper
-
 
     @Test
     fun `Map data Successfully`() {

@@ -14,7 +14,7 @@ enum class CryptoCurrencyEnum(val symbol: String, val displayName: String, val i
     SAN("SAN", "Santiment Network Token", R.drawable.ic_genericcoin),
     DAT("DAT", "Datum", R.drawable.ic_genericcoin),
     SNT("SNT", "Status", R.drawable.ic_genericcoin),
-    DOGE("DOGE","Dogecoin",  R.drawable.ic_genericcoin),
+    DOGE("DOGE", "Dogecoin", R.drawable.ic_genericcoin),
     LUNA("LUNA", "Terra", R.drawable.ic_genericcoin),
     MATIC("MATIC", "Polygon", R.drawable.ic_genericcoin),
     NEXO("NEXO", "Nexo", R.drawable.ic_genericcoin),
@@ -23,5 +23,5 @@ enum class CryptoCurrencyEnum(val symbol: String, val displayName: String, val i
     AAVE("AAVE", "Aave", R.drawable.ic_genericcoin),
     PLU("PLU", "Pluton", R.drawable.ic_genericcoin),
     FIL("FIL", "Filecoin", R.drawable.ic_genericcoin),
-    UNKNOWN("UNKNOWN", "UNKNOWN",-1)
+    UNKNOWN("UNKNOWN", "UNKNOWN", -1),
 }

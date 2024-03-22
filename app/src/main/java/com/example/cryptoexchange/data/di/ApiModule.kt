@@ -65,6 +65,4 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideApiService(httpClient: HttpClient): CryptoApiService = BitfinexApiService(httpClient)
-
-
 }

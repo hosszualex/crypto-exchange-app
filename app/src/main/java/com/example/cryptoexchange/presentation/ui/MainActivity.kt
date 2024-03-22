@@ -14,14 +14,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import com.example.cryptoexchange.presentation.theme.CryptoExchangeTheme
 import com.example.cryptoexchange.presentation.ui.crypto.CryptoListRoute
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     private val viewModel: MainViewModel by viewModels()
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter") // Not using it due to the fact we do not have a top or bottom bar.
@@ -33,7 +31,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     snackbarHost = {
                         SnackbarHost(hostState = snackbarHostState)
-                    }
+                    },
                 ) {
                     CryptoListRoute()
                     SnackbarInternetAvailability(snackbarHostState)
@@ -46,16 +44,17 @@ class MainActivity : ComponentActivity() {
     private fun SnackbarInternetAvailability(snackbarHostState: SnackbarHostState) {
         val isOnline by viewModel.isOnline.collectAsState()
         LaunchedEffect(isOnline) {
-            if (isOnline)
+            if (isOnline) {
                 snackbarHostState.showSnackbar(
                     message = "Network connected!",
                     duration = SnackbarDuration.Short,
                 )
-            else
+            } else {
                 snackbarHostState.showSnackbar(
                     message = "Network not connected!",
                     duration = SnackbarDuration.Short,
                 )
+            }
         }
     }
 }

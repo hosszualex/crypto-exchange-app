@@ -21,7 +21,7 @@ private val DarkColorScheme =
         primary = Purple80,
         secondary = PurpleGrey80,
         tertiary = Color.White,
-        surfaceVariant = PurpleGrey40
+        surfaceVariant = PurpleGrey40,
     )
 
 private val LightColorScheme =

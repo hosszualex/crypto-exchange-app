@@ -7,16 +7,13 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class CryptoDataRepositoryImpl
-@Inject
-constructor(
-    private val apiService: CryptoApiService,
-) : CryptoDataRepository {
-    override suspend fun getCryptoData(): Flow<List<CryptoCurrency>> {
-        return apiService.getCryptoData().map { responseString ->
-            CryptoCurrencyMapper.mapToCryptoCurrencyList(responseString)
+    @Inject
+    constructor(
+        private val apiService: CryptoApiService,
+    ) : CryptoDataRepository {
+        override suspend fun getCryptoData(cryptoSymbols: Set<String>): Flow<List<CryptoCurrency>> {
+            return apiService.getCryptoData(cryptoSymbols).map { responseString ->
+                CryptoCurrencyMapper.mapToCryptoCurrencyList(responseString)
+            }
         }
     }
-}
-
-
-

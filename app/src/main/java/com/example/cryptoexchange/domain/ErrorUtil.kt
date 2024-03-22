@@ -6,15 +6,16 @@ import java.net.UnknownHostException
 
 object ErrorUtil {
     const val ERROR_NO_INTERNET = 600
+    val ERROR_NO_INTERNET_EXCEPTION = Throwable("No internet connection.", Throwable(ERROR_NO_INTERNET.toString()))
 
     fun parsedErrorThrowable(exception: Throwable): Throwable {
         return when (exception) {
             is UnknownHostException,
             is SocketTimeoutException,
-            is ConnectException ->
-                Throwable("No internet connection.", Throwable(ERROR_NO_INTERNET.toString()))
+            is ConnectException,
+            ->
+                ERROR_NO_INTERNET_EXCEPTION
             else -> exception
         }
     }
-
 }

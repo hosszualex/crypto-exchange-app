@@ -12,14 +12,15 @@ object CryptoCurrencyMapper {
         for (i in 0 until jsonArray.length()) {
             val innerArray = jsonArray.getJSONArray(i)
             val cryptoSymbol = mapCryptoCurrencySymbol(innerArray.getString(0))
-            if (cryptoSymbol != CryptoCurrencyEnum.UNKNOWN)
+            if (cryptoSymbol != CryptoCurrencyEnum.UNKNOWN) {
                 cryptoCurrencyList.add(
                     CryptoCurrency(
                         cryptoCurrencySymbol = cryptoSymbol,
                         ask = innerArray.getDouble(3),
-                        dailyRelativeChange = innerArray.getDouble(6) * 100
-                    )
+                        dailyRelativeChange = innerArray.getDouble(6) * 100,
+                    ),
                 )
+            }
         }
         return cryptoCurrencyList
     }
