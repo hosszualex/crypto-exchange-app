@@ -21,6 +21,8 @@ A screen for crypto currencies which display the following data:
 - relative change to yesterday, percentage wise
 - a search bar which filters from the existing crypto currencies
 
+The data updates every 5 seconds while the screen is displayed to the user.
+
 Network connectivity updates in the form of a snackbar.
 
 ## Teck Stack
