@@ -3,7 +3,6 @@ package com.example.cryptoexchange.data.service
 import com.example.cryptoexchange.domain.toStringForSymbols
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.call.receive
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.url
@@ -25,8 +24,7 @@ class BitfinexApiService
                             "symbols",
                             cryptoSymbols.toStringForSymbols(),
                         )
-
-                    }.body()
+                    }.body(),
                 )
             }
     }

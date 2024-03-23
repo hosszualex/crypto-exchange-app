@@ -12,7 +12,7 @@ import javax.inject.Inject
 class MainViewModel
     @Inject
     constructor(
-        private val networkMonitor: NetworkMonitor,
+        networkMonitor: NetworkMonitor,
     ) : ViewModel() {
         val isOnline =
             networkMonitor.isOnline

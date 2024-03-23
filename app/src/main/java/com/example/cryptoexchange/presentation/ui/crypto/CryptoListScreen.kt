@@ -218,7 +218,7 @@ private fun CryptoCurrencyItem(currentCrypto: CryptoCurrency) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                painter = painterResource(currentCrypto.cryptoCurrencySymbol.imageReource),
+                painter = painterResource(currentCrypto.cryptoCurrencySymbol.imageResource),
                 contentDescription = "arrow down",
                 tint = Color.Unspecified,
                 modifier = Modifier.size(36.dp),
@@ -296,12 +296,14 @@ private fun CryptoCurrencyItem(currentCrypto: CryptoCurrency) {
                             text = dailyRelativeChange.formatDailyRelativeChange(),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
-                            color = if (dailyRelativeChange > 0)
-                                DarkGreen
-                            else if (dailyRelativeChange == 0.0)
-                                MaterialTheme.colorScheme.tertiary
-                            else
-                                Color.Red,
+                            color =
+                                if (dailyRelativeChange > 0) {
+                                    DarkGreen
+                                } else if (dailyRelativeChange == 0.0) {
+                                    MaterialTheme.colorScheme.tertiary
+                                } else {
+                                    Color.Red
+                                },
                             modifier = Modifier.padding(vertical = 2.dp),
                         )
                     }

@@ -15,7 +15,7 @@ object ErrorUtil {
             is UnknownHostException,
             is SocketTimeoutException,
             is ConnectException,
-            is SocketException
+            is SocketException,
             ->
                 ERROR_NO_INTERNET_EXCEPTION
             else -> exception

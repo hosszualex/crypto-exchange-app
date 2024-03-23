@@ -2,7 +2,7 @@ package com.example.cryptoexchange.domain.models
 
 import com.example.cryptoexchange.R
 
-enum class CryptoCurrencyEnum(val symbol: String, val displayName: String, val imageReource: Int) {
+enum class CryptoCurrencyEnum(val symbol: String, val displayName: String, val imageResource: Int) {
     BTC("BTC", "Bitcoin", R.drawable.ic_bitcoin),
     ETH("ETH", "Ethereum", R.drawable.ic_ethereum),
     BORG("BORG", "SwissBorg", R.drawable.ic_genericcoin),
