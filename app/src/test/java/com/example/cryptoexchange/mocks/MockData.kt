@@ -8,12 +8,12 @@ object MockData {
         listOf<CryptoCurrency>(
             CryptoCurrency(
                 cryptoCurrencySymbol = CryptoCurrencyEnum.BTC,
-                priceOfLastTrade = 63888.0,
+                priceOfLastTrade = 63925.0,
                 dailyRelativeChange = 1.39422,
             ),
             CryptoCurrency(
                 cryptoCurrencySymbol = CryptoCurrencyEnum.ETH,
-                priceOfLastTrade = 3345.3,
+                priceOfLastTrade = 3347.0,
                 dailyRelativeChange = 2.870666,
             ),
         )
@@ -22,7 +22,7 @@ object MockData {
         listOf<CryptoCurrency>(
             CryptoCurrency(
                 cryptoCurrencySymbol = CryptoCurrencyEnum.BTC,
-                priceOfLastTrade = 63888.0,
+                priceOfLastTrade = 63925.0,
                 dailyRelativeChange = 1.39422,
             ),
         )
